@@ -1,0 +1,166 @@
+!****************************************************************************
+!STURMIAN BASIS SET PARAMETERS 
+!****************************************************************************
+!
+!	orderlist
+!	-- Data for the number of Sturmian function to use as a basis
+!	norder:		(integer) number of radial Sturmians
+!
+&orderlist
+norder=300
+&end
+!
+!	energylist
+!	-- Energy of the Sturmians
+!	energy:		(complex*16) energy of radial Sturmians
+!
+&energylist
+energy =(-0.4d0,0d0)
+&end  
+!
+!	potlist
+!	-- Data for the Sturmian potentials
+!	ishort:		(integer) index to select the short range potential
+!				--0: Coulomb well -1/r
+!				--1: Yukawa -exp(-alpha*r)/r
+!				--2: Hulthen -exp(-alpha/r)/(1d0 - exp(-alpha/r))
+!				--3: Exponential -exp(-r*alpha)
+!				--4: Spherical well
+!				--5: Fullerene V(r)=-u0 rc0<=r<=rc0+delta0, 0 otherwhise +Coulomb
+!				--6: Two Fullerene V(r)=-u0 rc0<=r<=rc0+delta0, -u1 rc1<=r<=rc1+delta1, 0 otherwhise +Coulomb		
+!	alpha:		(real*8) data of the range of Yukawa, Hulten or Exponential potential
+!	charge:		(real*8) positive charge for the Coulomb potential (long range)
+!	u#:		(real*8) data for the fullerene potential (in a.u.)
+!	rc#:		(real*8) data for the fullerene potential (in a.u.)
+!	delta#:		(real*8) data for the fullerene potential (in a.u.)
+! 	iboundary:	(integer) index to select the boundary condition
+!				--0: stationary (box)
+!				--1: outgoing wave (eikonal)
+!				--(-1): incoming wave (eikonal)
+!
+&potlist
+ilong = 0
+ishort =  0 
+alpha= 0d0 
+charge= 1d0 
+u0 = 0d0 
+rc0 = 0d0 
+delta0 = 0d0 
+u1 = 0d0 
+rc1 = 0d0
+delta1 = 0d0 
+iboundary= 0
+&end
+!
+!	lqlist
+!	-- Angular momentum of the Sturmians
+!	lq:		(integer) maximum angular momentum to calculate the Sturmians
+!		
+!
+&lqlist
+lq= 15
+&end
+!
+!	bsplinelist
+!	-- Data for the Bsplines (used to calculate the Sturmians)
+!
+!	kp:		(integer) order of the Bsplines (degree of polynomial)
+!	nb:		(integer) number of Bsplines (equal or higher than norder)
+!	rmax:		(real*8) size of the box (from 0 to rmax)
+! 	nquad_bsp:	(integer) number of Legendre-Gauss quadrature points in between knot points to solve the Sturm-Liouville eq.
+!
+&bsplinelist
+kp=7 
+nb=2000
+rmax=300d0 
+nquad_bsp=15 
+&end
+!
+!	quadlist
+!	-- Data for the Sturmian integrals
+!	nquad:		(integer) number of Legendre-Gauss quadrature points to integrate Sturmians in [0,rmax]
+!
+&quadlist
+nquad=1000 
+&end
+!
+!********************************************************
+! DATA FOR PULSE PROPAGATION
+!********************************************************
+!	pulselist
+!	--Data for the pulse
+!	
+!	peaki:	intensity of the pulse such that a0=5.3378d-09*dsqrt(peaki)
+!	omega:	frecuency of the pulse 
+!	ncycle:	number of cycles such that tau=2*pi*ncycle/omega
+!	omega1:	frequency for the second pulse if env=2
+!	ncyle1:	number of cycles for the second pulse if env=2; duration of the plateau if env=3
+!	tsep:	time separation between two pulses for env=2
+!	phase:	phase of the pulse
+!	env:  	envelope of pulse in velocity gauge
+!			--1: a(t)=-ci*amax*sin(omega*t)*Sin(pi*t/tau)^2 for 0<=t<=tau tau=2*pi*ncycle/omega
+!			--2: a(t)=-ci*amax*(sin(omega*t)*Sin(pi*t/tau)^2 for 0<=t<=tau, sin(omega1*(t-tau-tsep))*Sin(pi*(t-tau-tsep)/tau1)^2 
+!					for tau+tsep<=t<=tau+tsep+tau1)	tau1=2*pi*ncycle1/omega1
+!			--3: a(t)=-ci*amax*sin(omega*t)*Sin(pi*t/2 tau)^2 for 0<=t<=tau, -ci*amax*sin(omega*t)	for tau<=t<=tau+tau1),
+!					-ci*amax*sin(omega*t)*Sin(pi*(t-tau1)/2 tau)^2 for tau+tau1<=t<=2*tau+tau1 tau=2*pi*ncycle/omega tau1=2*pi*ncycle1/omega	
+!	gauge:	--1: length gauge
+!			--2: velocity gauge
+!
+&pulselist
+peaki=5d+14
+omega=0.375d0
+ncycle=16.0d0
+omega1=0d0
+ncycle1=0d0
+tsep=0d0
+phase=0.0d0
+env=1
+gauge=2
+&end
+!
+!	propaglist
+!	--Data for the propagation in time--
+!	
+!	qnumber:		quantum numbers of the eigenstate to start propagatin (n,l)
+!	h:			fixed value of the time step during propagation
+!	nkry:			number of krylov vectors
+!	num_save_vec:		times to save vector during propagation
+!	tolrndm:		random number for the norm in Arnoldi
+!
+&propaglist
+qnumber= 1 0
+h=0.03d0
+nkry=60
+num_save_vec=50
+tolrndm=1d12
+&end
+!
+!**************************************************************
+! INFORMATION EXTRACTION: PROBABILITY DENSITY AND SPECTRUM
+!**************************************************************
+!
+!	plotlist
+!	--Data for plotting the wp density and energy spectrum--
+!
+!	plot_extract:		1 for extraction of the bound states in the radial density and/or wave packet plot
+!	plot_rdens:		1 for output file to plot the radial density of the wave packet at num_save_vec times
+!	plot_wavepkt: 		1 for output file of absolute value of wave paket with angular dependency
+!	plot_pop:		1 for output file of population of 1s,2p and 3p states
+!	plot_spect_td:		1 for output file of energy spectrum from projection in coulomb wave
+!	plot_rm:		1 for output file of mean radius
+!	ngrids:			number of plot points for radial coordinate
+!	ngridsk:		number of plot points for the spectrum for energy coordinate
+!	emax:			maximum value of energy to calculate the spectrum in (0,emax)
+!	
+&plotlist
+plot_extract=0
+plot_vq=0
+plot_rdens=0
+plot_wavepkt=0
+plot_pop=0
+plot_spect_td=1
+plot_rm=0
+ngrids=2000
+ngridsk=300
+emax=1d0
+&end
